@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ExplosionDelayTime: 0.1
+  m_ExplosionDelayRandomAdd: 0
   m_ExplosionOffset: {x: 0, y: 0, z: 0}
   m_ExplosionRadius:
     serializedVersion: 2
@@ -93,7 +94,7 @@ MonoBehaviour:
       outSlope: -14.4531355
       tangentMode: 0
     - time: 7.75
-      value: -800
+      value: -3000
       inSlope: -8.594338
       outSlope: -8.594338
       tangentMode: 0

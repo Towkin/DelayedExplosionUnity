@@ -4,6 +4,9 @@ using System.Collections;
 public class DelayExplosion : MonoBehaviour {
     [SerializeField]
     private float m_ExplosionDelayTime = 1.0f;
+    [SerializeField]
+    private float m_ExplosionDelayRandomAdd = 0.0f;
+
     private float m_ExplosionTriggerTime;
     public float ExplosionTriggerTime {
         get { return m_ExplosionTriggerTime; }
@@ -37,12 +40,12 @@ public class DelayExplosion : MonoBehaviour {
         get { return m_ForceFalloff; }
     }
     
-    void Start () {
+    private void Start () {
         if(ExplosionForce.length == 0 || ExplosionRadius.length == 0) {
             Destroy(this);
         }
 
-        m_ExplosionTriggerTime = Time.time + m_ExplosionDelayTime;
+        m_ExplosionTriggerTime = Time.time + m_ExplosionDelayTime + Random.value * m_ExplosionDelayRandomAdd;
 
         foreach (Keyframe Key in ExplosionRadius.keys) {
             m_ExplosionEndTime = Mathf.Max(ExplosionEndTime, ExplosionTriggerTime + Key.time);
@@ -51,8 +54,8 @@ public class DelayExplosion : MonoBehaviour {
             m_ExplosionEndTime = Mathf.Max(ExplosionEndTime, ExplosionTriggerTime + Key.time);
         }
     }
-	
-    void FixedUpdate() {
+
+    private void FixedUpdate() {
         if(Time.time > ExplosionTriggerTime) {
             if(Time.time > ExplosionEndTime) {
                 Destroy(this);
@@ -61,6 +64,10 @@ public class DelayExplosion : MonoBehaviour {
             float ExplosionTime = Time.time - ExplosionTriggerTime;
             float Radius = ExplosionRadius.Evaluate(ExplosionTime);
             float Force = ExplosionForce.Evaluate(ExplosionTime);
+
+            if(Radius <= 0) {
+                return;
+            }
 
             Collider[] HitColliders = Physics.OverlapSphere(transform.position, Radius);
             
@@ -78,8 +85,13 @@ public class DelayExplosion : MonoBehaviour {
             }
         }
     }
+
+    private void OnExplosionEnd() {
+
+    }
+
 #if UNITY_EDITOR
-    void OnDrawGizmos() {
+    private void OnDrawGizmos() {
         if (Time.time > ExplosionTriggerTime) {
             float ExplosionTime = Time.time - ExplosionTriggerTime;
             float Radius = ExplosionRadius.Evaluate(ExplosionTime);
